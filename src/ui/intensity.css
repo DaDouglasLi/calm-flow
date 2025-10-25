@@ -1,0 +1,62 @@
+/* Minimal intensity slider UI - top-left positioned */
+.tl-intensity {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 1000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 11px;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  padding: 6px 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 120px;
+}
+
+.tl-intensity label {
+  color: #333;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.tl-intensity input[type="range"] {
+  flex: 1;
+  min-width: 60px;
+  height: 4px;
+  background: #ddd;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+
+.tl-intensity input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  width: 12px;
+  height: 12px;
+  background: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 1px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.tl-intensity input[type="range"]::-moz-range-thumb {
+  width: 12px;
+  height: 12px;
+  background: #007bff;
+  border-radius: 50%;
+  cursor: pointer;
+  border: 1px solid #fff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.tl-intensity #intensity-val {
+  color: #666;
+  font-size: 10px;
+  min-width: 32px;
+  text-align: right;
+}

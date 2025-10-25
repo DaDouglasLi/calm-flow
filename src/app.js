@@ -4,6 +4,10 @@
 import { startCadence, stopCadence } from './input/cadence.js'
 import { createAudioEngine } from './audio/engine.js'
 import { mapIkiToAudioParams, resetMapping } from './mapping/audioMapping.js'
+import { mapIkiToVisualParams, resetVisualMapping } from './mapping/visualMapping.js'
+import { mount as mountVisualScene } from './visual/scene.js'
+import { initTabs, updateStatus, hideFileInput, showFileInput } from './ui/tabs.js'
+import { initIntensity, getIntensity } from './ui/intensity.js'
 
 // Application configuration
 const config = {
@@ -11,9 +15,18 @@ const config = {
   version: '1.0.0'
 }
 
+// DEV mode for instrumentation
+const DEV = true // Set to false for production
+
 // Audio engine instance
 let audioEngine = null
+let visualScene = null
 let hasStartedAudio = false
+
+// DEV instrumentation
+let devCadenceReceived = false
+let devAudioStartResult = null
+let devMotionTestBuffer = null
 
 // Bootstrap function
 function bootstrap() {
@@ -25,6 +38,32 @@ function bootstrap() {
 
 // Initialize application components
 function initializeApp() {
+  // Initialize tabs
+  initTabs()
+  
+  // Initialize intensity slider
+  initIntensity()
+  
+  // Mount visual scene
+  const canvas = document.getElementById('scene')
+  if (canvas) {
+    visualScene = mountVisualScene(canvas)
+    console.log('Visual scene mounted')
+    
+    // Hide start button after successful mount
+    const startButton = document.getElementById('start-button')
+    if (startButton) {
+      startButton.classList.add('hidden')
+    }
+    
+    // DEV: Start motion test
+    if (DEV) {
+      devMotionTest()
+    }
+  } else {
+    console.warn('Canvas element not found')
+  }
+  
   // Set up event listeners
   setupEventListeners()
   
@@ -34,6 +73,11 @@ function initializeApp() {
   // Prepare audio engine and try to start immediately
   prepareAudioEngine()
   tryStartAudioImmediately()
+  
+  // DEV: Start sanity checks
+  if (DEV) {
+    devSanityChecks()
+  }
 }
 
 // Set up event listeners
@@ -46,6 +90,19 @@ function setupEventListeners() {
   
   // Handle visibility changes for tab switching
   setupVisibilityHandling()
+  
+  // Handle file upload events
+  document.addEventListener('ui:file-selected', handleFileSelected)
+  document.addEventListener('ui:reset-to-noise', handleResetToNoise)
+  
+  // Handle intensity slider
+  document.addEventListener('ui:intensity', handleIntensityChange)
+  
+  // Handle start button
+  const startButton = document.getElementById('start-button')
+  if (startButton) {
+    startButton.addEventListener('click', handleStartButton)
+  }
   
   // Handle page unload for cleanup (multiple events for safety)
   window.addEventListener('beforeunload', cleanup)
@@ -64,20 +121,43 @@ function handleCadenceUpdate(event) {
     lastKeyAt: lastKeyAt !== null ? new Date(lastKeyAt).toLocaleTimeString() : 'N/A'
   })
   
-  // Map IKI to audio parameters
-  if (emaIkiMs !== null && audioEngine && audioEngine.isRunning()) {
-    const mappedParams = mapIkiToAudioParams(emaIkiMs, audioEngine)
+  // DEV: Mark cadence as received
+  if (DEV) {
+    devCadenceReceived = true
+  }
+  
+  // Map IKI to parameters and blend with intensity
+  if (emaIkiMs !== null) {
+    const intensity = getIntensity()
     
-    if (mappedParams) {
-      console.log('Mapping IKI to audio params:', {
-        ikiMs: emaIkiMs.toFixed(1),
-        gain: mappedParams.gain.toFixed(3),
-        cutoffHz: mappedParams.cutoffHz.toFixed(0),
-        breathHz: mappedParams.breathHz.toFixed(3)
-      })
-      
-      // Apply mapped parameters to audio engine
-      audioEngine.setParams(mappedParams)
+    // Baseline midpoints for blending
+    const baselineAudio = { gain: 0.23, cutoffHz: 1500, breathHz: 0.095 }
+    const baselineVisual = { speed: 0.095, detail: 0.8, saturation: 0.7, palette: 'day' }
+    
+    // Get mapped parameters
+    const mappedAudioParams = audioEngine ? mapIkiToAudioParams(emaIkiMs, audioEngine) : null
+    const mappedVisualParams = visualScene ? mapIkiToVisualParams(emaIkiMs, visualScene) : null
+    
+    // Blend with intensity: out = mix(baseline, mapped, intensity)
+    if (mappedAudioParams && audioEngine && audioEngine.isRunning()) {
+      const blendedAudio = {
+        gain: baselineAudio.gain + (mappedAudioParams.gain - baselineAudio.gain) * intensity,
+        cutoffHz: baselineAudio.cutoffHz + (mappedAudioParams.cutoffHz - baselineAudio.cutoffHz) * intensity,
+        breathHz: baselineAudio.breathHz + (mappedAudioParams.breathHz - baselineAudio.breathHz) * intensity
+      }
+      audioEngine.setParams(blendedAudio)
+      console.log('Audio parameters updated:', blendedAudio)
+    }
+    
+    if (mappedVisualParams && visualScene) {
+      const blendedVisual = {
+        speed: baselineVisual.speed + (mappedVisualParams.speed - baselineVisual.speed) * intensity,
+        detail: baselineVisual.detail + (mappedVisualParams.detail - baselineVisual.detail) * intensity,
+        saturation: baselineVisual.saturation + (mappedVisualParams.saturation - baselineVisual.saturation) * intensity,
+        palette: mappedVisualParams.palette // Keep palette as-is
+      }
+      visualScene.setParams(blendedVisual)
+      console.log('Visual parameters updated:', blendedVisual)
     }
   }
 }
@@ -98,18 +178,31 @@ function prepareAudioEngine() {
   console.log('Audio engine prepared')
 }
 
-// Try to start audio immediately on page load
+// Start audio immediately on page load - no user gesture required
 async function tryStartAudioImmediately() {
   if (hasStartedAudio) return
   
   try {
-    console.log('Attempting to start audio immediately...')
+    console.log('Starting audio immediately on page load...')
     await audioEngine.start()
     hasStartedAudio = true
     console.log('Audio started successfully on page load!')
+    
+    // DEV: Log audio start result
+    if (DEV) {
+      devAudioStartResult = 'immediate'
+      updateStatusChip('calm-flow · visuals running · audio playing')
+    }
   } catch (error) {
-    console.log('Immediate audio start failed, will wait for user interaction:', error.message)
-    // Fall back to user interaction if immediate start fails
+    console.error('Failed to start audio on page load:', error)
+    
+    // DEV: Log fallback needed
+    if (DEV) {
+      devAudioStartResult = 'fallback_needed'
+      updateStatusChip('calm-flow · visuals running · audio ready')
+    }
+    
+    // Audio will start on first user interaction as fallback
   }
 }
 
@@ -170,6 +263,160 @@ function setupVisibilityHandling() {
   console.log('Visibility handling set up')
 }
 
+// Handle file selection
+async function handleFileSelected(event) {
+  const file = event.detail
+  
+  try {
+    updateStatus('Decoding...')
+    
+    // Ensure audio engine is running
+    if (!audioEngine || !audioEngine.isRunning()) {
+      await audioEngine.start()
+    }
+    
+    // Decode audio file
+    const arrayBuffer = await file.arrayBuffer()
+    const audioBuffer = await audioEngine.audioContext.decodeAudioData(arrayBuffer)
+    
+    // Switch to user buffer
+    await audioEngine.useUserBuffer(audioBuffer)
+    
+    updateStatus('Playing pink noise with rhythm from your audio')
+    hideFileInput()
+    
+    // Auto-close panel after 3 seconds
+    setTimeout(() => {
+      const uploadPanel = document.getElementById('upload-panel')
+      if (uploadPanel && uploadPanel.classList.contains('active')) {
+        uploadPanel.classList.remove('active')
+        document.getElementById('upload-tab').classList.remove('active')
+      }
+    }, 3000)
+    
+  } catch (error) {
+    console.error('Error loading audio file:', error)
+    updateStatus('Error: Could not load file')
+    showFileInput()
+  }
+}
+
+// Handle reset to noise
+async function handleResetToNoise() {
+  try {
+    if (audioEngine && audioEngine.isRunning()) {
+      await audioEngine.useNoiseSource()
+      updateStatus('Playing built-in noise')
+      showFileInput()
+    }
+  } catch (error) {
+    console.error('Error resetting to noise:', error)
+    updateStatus('Error: Could not reset')
+  }
+}
+
+// Handle start button click
+function handleStartButton() {
+  try {
+    // Try to start audio if not already running
+    if (audioEngine && !audioEngine.isRunning()) {
+      audioEngine.start()
+      console.log('Audio started via start button')
+    }
+    
+    // Hide the start button
+    const startButton = document.getElementById('start-button')
+    if (startButton) {
+      startButton.classList.add('hidden')
+    }
+    
+    console.log('Application started via start button')
+  } catch (error) {
+    console.error('Error starting via button:', error)
+  }
+}
+
+// Handle intensity slider change
+function handleIntensityChange(event) {
+  const intensity = event.detail.value
+  console.log('Intensity changed to:', intensity)
+  
+  // The intensity is already applied in the cadence update handler
+  // This just logs the change for debugging
+}
+
+// Update status chip
+function updateStatusChip(text) {
+  const statusChip = document.getElementById('status-chip')
+  if (statusChip) {
+    statusChip.textContent = text
+  }
+}
+
+// DEV: Motion test to verify visual movement
+function devMotionTest() {
+  if (!DEV || !visualScene) return
+  
+  setTimeout(() => {
+    if (visualScene && visualScene.offscreenCanvas) {
+      const ctx = visualScene.offscreenCtx
+      const width = visualScene.offscreenCanvas.width
+      const height = visualScene.offscreenCanvas.height
+      
+      // Sample a pixel from the offscreen buffer
+      const imageData1 = ctx.getImageData(width/2, height/2, 1, 1)
+      const pixel1 = imageData1.data[0] // Red channel
+      
+      setTimeout(() => {
+        const imageData2 = ctx.getImageData(width/2, height/2, 1, 1)
+        const pixel2 = imageData2.data[0] // Red channel
+        
+        const motionDetected = Math.abs(pixel1 - pixel2) > 5
+        console.log('DEV Motion Test:', {
+          pixel1, pixel2, 
+          motionDetected,
+          result: motionDetected ? 'PASS' : 'FAIL'
+        })
+        
+        if (!motionDetected) {
+          console.warn('DEV: Visual motion not detected - check animation loop')
+        }
+      }, 1000)
+    }
+  }, 3000)
+}
+
+// DEV: Automated sanity checks
+function devSanityChecks() {
+  if (!DEV) return
+  
+  setTimeout(() => {
+    console.log('DEV Sanity Checks:', {
+      cadenceReceived: devCadenceReceived,
+      audioStartResult: devAudioStartResult,
+      visualSceneMounted: !!visualScene,
+      audioEngineReady: !!audioEngine
+    })
+    
+    // Assertions
+    if (!devCadenceReceived) {
+      console.warn('DEV: No cadence events received - check keystroke detection')
+    }
+    
+    if (!devAudioStartResult) {
+      console.warn('DEV: Audio start not attempted - check initialization')
+    }
+    
+    if (!visualScene) {
+      console.warn('DEV: Visual scene not mounted - check canvas element')
+    }
+    
+    if (!audioEngine) {
+      console.warn('DEV: Audio engine not created - check initialization')
+    }
+  }, 5000)
+}
+
 // Cleanup function - idempotent and safe
 function cleanup() {
   try {
@@ -182,8 +429,15 @@ function cleanup() {
       audioEngine = null
     }
     
+    // Dispose visual scene
+    if (visualScene) {
+      visualScene.dispose()
+      visualScene = null
+    }
+    
     // Reset mapping state
     resetMapping()
+    resetVisualMapping()
     
     console.log('Application cleanup completed')
   } catch (error) {

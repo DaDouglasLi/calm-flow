@@ -1,0 +1,100 @@
+/* Site-wide styles for calm-flow */
+
+:root {
+  --color-bg: #0a0a0a;
+  --color-text: rgba(255, 255, 255, 0.82);
+  --color-accent: rgba(255, 255, 255, 0.1);
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 12px;
+  --spacing-lg: 16px;
+  --border-radius: 6px;
+  --shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+/* Base layout */
+html, body {
+  height: 100%;
+  overflow: hidden;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Full-screen canvas background */
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+/* Vignette overlay for depth */
+.vignette::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, rgba(0, 0, 0, 0) 60%, rgba(0, 0, 0, 0.25) 100%);
+  z-index: 2;
+}
+
+/* Status chip */
+.status-chip {
+  position: fixed;
+  top: var(--spacing-md);
+  right: var(--spacing-md);
+  z-index: 1000;
+  background: var(--color-accent);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--border-radius);
+  padding: var(--spacing-sm) var(--spacing-md);
+  font-size: 11px;
+  color: var(--color-text);
+  box-shadow: var(--shadow);
+  transition: opacity 0.3s ease;
+  max-width: 200px;
+}
+
+.status-chip.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Hide status chip on small screens after delay */
+@media (max-width: 768px) {
+  .status-chip {
+    animation: fadeOut 3s ease-in-out 2s forwards;
+  }
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+/* Accessibility */
+.status-chip[aria-live="polite"] {
+  /* Screen reader support */
+}
+
+/* Ensure existing UI elements don't interfere */
+.tl-tabs, .tl-intensity {
+  z-index: 1001;
+}
+
+/* Start button (fallback) */
+#start-button {
+  z-index: 1002;
+}
+
+/* Smooth transitions for all interactive elements */
+* {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
