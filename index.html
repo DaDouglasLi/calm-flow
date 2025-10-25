@@ -27,54 +27,19 @@
       margin-bottom: 30px;
     }
     
-    #startBtn {
-      display: block;
-      width: 200px;
-      margin: 0 auto 30px;
-      padding: 12px 24px;
-      background-color: #007bff;
-      color: white;
-      border: none;
-      border-radius: 6px;
+    p {
+      text-align: center;
+      color: #666;
       font-size: 16px;
-      cursor: pointer;
-      transition: background-color 0.2s;
-    }
-    
-    #startBtn:hover {
-      background-color: #0056b3;
-    }
-    
-    #startBtn:active {
-      background-color: #004085;
-    }
-    
-    #log {
-      background-color: #f8f9fa;
-      border: 1px solid #dee2e6;
-      border-radius: 4px;
-      padding: 15px;
-      min-height: 200px;
-      font-family: 'Courier New', monospace;
-      font-size: 14px;
-      overflow-y: auto;
-    }
-    
-    .log-entry {
-      margin-bottom: 5px;
-      color: #495057;
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Calm Flow</h1>
-    <button id="startBtn">Start</button>
-    <div id="log">
-      <div class="log-entry">[System] Application loaded. Click Start to begin.</div>
-    </div>
+    <p>Keystroke cadence analyzer is running. Check the console for metrics.</p>
   </div>
   
-  <script type="module" src="/src/main.ts"></script>
+  <script type="module" src="/src/main.js"></script>
 </body>
 </html>
