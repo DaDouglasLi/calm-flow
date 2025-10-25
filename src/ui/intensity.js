@@ -25,11 +25,13 @@ export function initIntensity() {
     intensityVal.textContent = currentIntensity.toFixed(2)
     
     // Dispatch custom event
-    document.dispatchEvent(new CustomEvent('ui:intensity', { 
+    const customEvent = new CustomEvent('ui:intensity', { 
       detail: { value: currentIntensity } 
-    }))
+    })
+    document.dispatchEvent(customEvent)
     
     console.log('Intensity changed:', currentIntensity)
+    console.log('Dispatched ui:intensity event with value:', currentIntensity)
   })
   
   console.log('Intensity slider initialized')

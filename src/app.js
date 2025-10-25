@@ -126,38 +126,29 @@ function handleCadenceUpdate(event) {
     devCadenceReceived = true
   }
   
-  // Map IKI to parameters and blend with intensity
+  // Map IKI to parameters
   if (emaIkiMs !== null) {
-    const intensity = getIntensity()
-    
-    // Baseline midpoints for blending
-    const baselineAudio = { gain: 0.23, cutoffHz: 1500, breathHz: 0.095 }
-    const baselineVisual = { speed: 0.095, detail: 0.8, saturation: 0.7, palette: 'day' }
+    const lightIntensity = getIntensity() // Now controls light intensity
     
     // Get mapped parameters
     const mappedAudioParams = audioEngine ? mapIkiToAudioParams(emaIkiMs, audioEngine) : null
     const mappedVisualParams = visualScene ? mapIkiToVisualParams(emaIkiMs, visualScene) : null
     
-    // Blend with intensity: out = mix(baseline, mapped, intensity)
+    // Apply audio parameters directly (no intensity blending)
     if (mappedAudioParams && audioEngine && audioEngine.isRunning()) {
-      const blendedAudio = {
-        gain: baselineAudio.gain + (mappedAudioParams.gain - baselineAudio.gain) * intensity,
-        cutoffHz: baselineAudio.cutoffHz + (mappedAudioParams.cutoffHz - baselineAudio.cutoffHz) * intensity,
-        breathHz: baselineAudio.breathHz + (mappedAudioParams.breathHz - baselineAudio.breathHz) * intensity
-      }
-      audioEngine.setParams(blendedAudio)
-      console.log('Audio parameters updated:', blendedAudio)
+      audioEngine.setParams(mappedAudioParams)
+      console.log('Audio parameters updated:', mappedAudioParams)
     }
     
+    // Apply visual parameters with light intensity control
     if (mappedVisualParams && visualScene) {
-      const blendedVisual = {
-        speed: baselineVisual.speed + (mappedVisualParams.speed - baselineVisual.speed) * intensity,
-        detail: baselineVisual.detail + (mappedVisualParams.detail - baselineVisual.detail) * intensity,
-        saturation: baselineVisual.saturation + (mappedVisualParams.saturation - baselineVisual.saturation) * intensity,
-        palette: mappedVisualParams.palette // Keep palette as-is
+      const visualParams = {
+        ...mappedVisualParams,
+        lightIntensity: lightIntensity, // Pass light intensity to visual scene
+        breathHz: mappedAudioParams ? mappedAudioParams.breathHz : 0.1 // Sync with audio breathing
       }
-      visualScene.setParams(blendedVisual)
-      console.log('Visual parameters updated:', blendedVisual)
+      visualScene.setParams(visualParams)
+      console.log('Visual parameters updated:', visualParams)
     }
   }
 }
@@ -336,13 +327,18 @@ function handleStartButton() {
   }
 }
 
-// Handle intensity slider change
+// Handle light intensity slider change
 function handleIntensityChange(event) {
-  const intensity = event.detail.value
-  console.log('Intensity changed to:', intensity)
+  const lightIntensity = event.detail.value
+  console.log('Light intensity changed to:', lightIntensity)
   
-  // The intensity is already applied in the cadence update handler
-  // This just logs the change for debugging
+  // Apply light intensity directly to visual scene
+  if (visualScene) {
+    visualScene.setParams({ lightIntensity: lightIntensity })
+    console.log('Applied light intensity to visual scene:', lightIntensity)
+  } else {
+    console.warn('Visual scene not available for light intensity update')
+  }
 }
 
 // Update status chip

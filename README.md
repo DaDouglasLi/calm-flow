@@ -2,6 +2,27 @@
 
 A meditative web experience that combines background pink-ish noise with slow breathing and a generative abstract visual, both responding to typing cadence. The site has no start/stop UI; visuals auto-run, audio auto-plays or starts on first interaction per browser policy.
 
+## Features
+-Real-time typing cadence analysis - Monitors keystroke timing and calculates smoothed inter-key intervals (IKI) to detect typing rhythm
+-Audio-visual synchronization - Synchronizes breathing frequencies between pink noise audio engine and visual breathing animation for unified meditative experience
+-Dynamic parameter mapping - Maps typing cadence to audio parameters (gain, cutoff, breath rate) and visual parameters (speed, detail, saturation) with smooth transitions
+-Light intensity control - Dramatic brightness slider that controls visual elements (stars, ripples, gradients) and applies dark overlay for ambient lighting control
+
+## Team members
+Da Li
+- Sophmore
+- Major: computer science & data science
+- Framework, audio generator
+- https://www.linkedin.com/in/da-li-69572b323/
+- da.li@wustl.edu
+
+Qiyuan Hunag
+- Sophmore
+- Major: computer science
+- UI, Vsualization
+- https://www.linkedin.com/in/qiyuan-huang-453394390/
+- h.qiyuan@wustl.edu
+
 ## What it does
 
 Auto visual background + pink-ish noise with breathing; both respond to typing cadence; no start buttons; audio auto-plays or starts on first interaction.
@@ -10,8 +31,8 @@ Auto visual background + pink-ish noise with breathing; both respond to typing c
 
 ```bash
 # Prereqs: Node.js 18+ and npm
-git clone <YOUR_REPO_URL>.git
-cd <REPO_NAME>
+git clone <https://github.com/DaDouglasLi/calm-flow.git>.git
+cd <calm-flow>
 npm install
 npm run dev
 # open the shown local URL in your browser
@@ -46,6 +67,16 @@ White Noise Loop → Pink Tilt Filter → Lowpass Filter → Master Gain → Bre
 - **detail:** 0.6 (fast) ↔ 1.0 (slow)
 - **saturation:** 0.6 (fast) ↔ 0.8 (slow)
 
+### Light Intensity Control
+
+The **Light** slider controls the overall brightness of the visual animation with dramatic effect:
+
+- **1.00**: Full brightness - all visual elements at maximum visibility, no dark overlay
+- **0.50**: Half brightness - moderate visibility with significant darkening overlay
+- **0.00**: Very dark - minimal visibility with heavy dark overlay, only subtle elements visible
+
+This provides dramatic control over the ambient lighting, allowing you to adjust from bright and vibrant to very dim and subtle, creating different meditative atmospheres.
+
 ### Autoplay Policy
 
 The app attempts audio playback on load. If blocked by the browser, it starts automatically on your first natural interaction (keydown/pointer/touch). No buttons or icons are used.
@@ -61,11 +92,6 @@ The app attempts audio playback on load. If blocked by the browser, it starts au
 
 Keystrokes are not stored or sent anywhere. Cadence metrics are computed in-memory and used only to modulate audio/visual parameters locally.
 
-## Success Criteria
+## Deploy (Vercel/Netlify)
 
-- **On page load:** visual background animates immediately; no scrollbars; no console errors
-- **Audio:** tries to start immediately; if blocked, starts on first natural interaction (keydown/pointer/touch)
-- **Typing faster:** audibly darker & slightly quieter noise, slower breathing; visuals show slightly faster motion / reduced detail per mapping
-- **Typing slower/idle:** brighter & slightly louder; breathing slightly faster; visuals ease accordingly
-- **UI looks polished:** vignette, typography, optional tiny status chip, no buttons/icons added for start
-- **Resize safe:** no stack overflow, performance steady (≤60 fps; throttled when hidden)
+Deploy the dist/ output. Framework preset: Vite. Single-page static hosting is sufficient.
