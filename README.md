@@ -3,10 +3,10 @@
 A meditative web experience that combines background pink-ish noise with slow breathing and a generative abstract visual, both responding to typing cadence. The site has no start/stop UI; visuals auto-run, audio auto-plays or starts on first interaction per browser policy.
 
 ## Features
--Real-time typing cadence analysis - Monitors keystroke timing and calculates smoothed inter-key intervals (IKI) to detect typing rhythm
--Audio-visual synchronization - Synchronizes breathing frequencies between pink noise audio engine and visual breathing animation for unified meditative experience
--Dynamic parameter mapping - Maps typing cadence to audio parameters (gain, cutoff, breath rate) and visual parameters (speed, detail, saturation) with smooth transitions
--Light intensity control - Dramatic brightness slider that controls visual elements (stars, ripples, gradients) and applies dark overlay for ambient lighting control
+- Real-time typing cadence analysis - Monitors keystroke timing and calculates smoothed inter-key intervals (IKI) to detect typing rhythm
+- Audio-visual synchronization - Synchronizes breathing frequencies between pink noise audio engine and visual breathing animation for unified meditative experience
+- Dynamic parameter mapping - Maps typing cadence to audio parameters (gain, cutoff, breath rate) and visual parameters (speed, detail, saturation) with smooth transitions
+- Light intensity control - Dramatic brightness slider that controls visual elements (stars, ripples, gradients) and applies dark overlay for ambient lighting control
 
 ## Team members
 Da Li
