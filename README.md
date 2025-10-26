@@ -2,6 +2,8 @@
 
 A meditative web experience that combines background pink-ish noise with slow breathing and a generative abstract visual, both responding to typing cadence. The site has no start/stop UI; visuals auto-run, audio auto-plays or starts on first interaction per browser policy.
 
+This is a project built for HackWashU 2025.
+
 ## Features
 - Real-time typing cadence analysis - Monitors keystroke timing and calculates smoothed inter-key intervals (IKI) to detect typing rhythm
 - Audio-visual synchronization - Synchronizes breathing frequencies between pink noise audio engine and visual breathing animation for unified meditative experience
