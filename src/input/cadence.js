@@ -90,7 +90,7 @@ function handleKeydown(event) {
   
   currentMetrics.lastKeyAt = now
   
-  // Publish metrics (throttled)
+  // Publish metrics (throttled) - works even when tab is hidden
   publishMetrics()
 }
 
@@ -116,7 +116,7 @@ export function startCadence() {
     lastKeyAt: null
   }
   
-  // Set up keydown listener
+  // Set up keydown listener with capture mode (works even when tab is hidden)
   keydownListener = handleKeydown
   window.addEventListener('keydown', keydownListener, true)
   

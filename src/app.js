@@ -145,7 +145,7 @@ function handleCadenceUpdate(event) {
       const visualParams = {
         ...mappedVisualParams,
         lightIntensity: lightIntensity, // Pass light intensity to visual scene
-        breathHz: mappedAudioParams ? mappedAudioParams.breathHz : 0.1 // Sync with audio breathing
+        breathHz: mappedAudioParams ? mappedAudioParams.breathHz : 0.08 // Sync with audio breathing
       }
       visualScene.setParams(visualParams)
       console.log('Visual parameters updated:', visualParams)
@@ -240,18 +240,12 @@ function setupVisibilityHandling() {
       return
     }
     
-    if (document.hidden) {
-      // Tab is hidden - reduce volume by ~6dB (0.5 scalar)
-      audioEngine.setVisibilityGain(0.5)
-      console.log('Tab hidden - reducing audio volume')
-    } else {
-      // Tab is visible - restore full volume
-      audioEngine.setVisibilityGain(1.0)
-      console.log('Tab visible - restoring audio volume')
-    }
+    // Keep full volume even when tab is hidden for continuous meditative experience
+    audioEngine.setVisibilityGain(1.0)
+    console.log('Tab visibility changed - maintaining full audio volume')
   })
   
-  console.log('Visibility handling set up')
+  console.log('Visibility handling set up - maintaining full volume')
 }
 
 // Handle file selection

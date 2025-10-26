@@ -6,12 +6,12 @@ const IKI_MIN = 80
 const IKI_MAX = 500
 
 // Audio parameter ranges
-const GAIN_MIN = 0.18  // fast typing (lower volume)
-const GAIN_MAX = 0.28  // slow typing (higher volume)
+const GAIN_MIN = 0.15  // fast typing (lower volume)
+const GAIN_MAX = 0.40  // slow typing (higher volume)
 const CUTOFF_MIN = 800  // fast typing (darker/lower cutoff)
 const CUTOFF_MAX = 2200 // slow typing (brighter/higher cutoff)
-const BREATH_MIN = 0.07  // fast typing (slower breathing)
-const BREATH_MAX = 0.12  // slow typing (faster breathing)
+const BREATH_MIN = 0.05  // fast typing (slower breathing)
+const BREATH_MAX = 0.18  // slow typing (faster breathing)
 
 // Ramp timing (ms)
 const ATTACK_TIME = 300
