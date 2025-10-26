@@ -1,14 +1,17 @@
 # calm-flow
 
-A meditative web experience that combines background pink-ish noise with slow breathing and a generative abstract visual, both responding to typing cadence. The site has no start/stop UI; visuals auto-run, audio auto-plays or starts on first interaction per browser policy.
+A meditative desktop application that combines background pink-ish noise with slow breathing and a generative abstract visual, both responding to typing cadence. Built with Electron for cross-platform desktop experience with global keyboard detection that works even when the app is hidden.
 
 This is a project built for HackWashU 2025.
 
 ## Features
-- Real-time typing cadence analysis - Monitors keystroke timing and calculates smoothed inter-key intervals (IKI) to detect typing rhythm
-- Audio-visual synchronization - Synchronizes breathing frequencies between pink noise audio engine and visual breathing animation for unified meditative experience
-- Dynamic parameter mapping - Maps typing cadence to audio parameters (gain, cutoff, breath rate) and visual parameters (speed, detail, saturation) with smooth transitions
-- Light intensity control - Dramatic brightness slider that controls visual elements (stars, ripples, gradients) and applies dark overlay for ambient lighting control
+- **Desktop Application** - Native Electron app with cross-platform support (Windows, macOS, Linux)
+- **Global Keyboard Detection** - Responds to typing even when the app is minimized or hidden behind other windows
+- **Real-time typing cadence analysis** - Monitors keystroke timing and calculates smoothed inter-key intervals (IKI) to detect typing rhythm
+- **Audio-visual synchronization** - Synchronizes breathing frequencies between pink noise audio engine and visual breathing animation for unified meditative experience
+- **Dynamic parameter mapping** - Maps typing cadence to audio parameters (gain, cutoff, breath rate) and visual parameters (speed, detail, saturation) with smooth transitions
+- **Light intensity control** - Dramatic brightness slider that controls visual elements (stars, ripples, gradients) and applies dark overlay for ambient lighting control
+- **Native Menu & Shortcuts** - Desktop menu bar with keyboard shortcuts for full-screen, dev tools, and app control
 
 ## Team members
 Da Li
@@ -27,25 +30,65 @@ Qiyuan Hunag
 
 ## What it does
 
-Auto visual background + pink-ish noise with breathing; both respond to typing cadence; no start buttons; audio auto-plays or starts on first interaction.
+Auto visual background + pink-ish noise with breathing; both respond to typing cadence; no start buttons; audio auto-plays immediately on app launch. Works as a desktop application with global keyboard detection for continuous meditative experience.
 
-## Clone & Run (local)
+## How to Open the App
 
+### **Quick Start (Recommended)**
 ```bash
-# Prereqs: Node.js 18+ and npm
+# 1. Clone the repository
 git clone https://github.com/DaDouglasLi/calm-flow.git
 cd calm-flow
+
+# 2. Install dependencies
 npm install
-npm run dev
-# open the shown local URL in your browser
+
+# 3. Start the desktop app
+npm run electron
 ```
 
-## Build & Preview
-
+### **Development Mode**
 ```bash
-npm run build
-npm run preview
+# Terminal 1: Start web server
+npm run dev
+
+# Terminal 2: Start Electron in development mode
+npm run electron-dev
 ```
+
+### **Build & Distribute**
+```bash
+# Build the app
+npm run build
+
+# Create distributable packages
+npm run dist
+```
+
+## Desktop Features
+
+### **Keyboard Shortcuts**
+- **Ctrl/Cmd + R**: Reset to pink noise
+- **F11**: Toggle full screen
+- **Ctrl/Cmd + Shift + I**: Toggle developer tools
+- **Ctrl/Cmd + M**: Minimize window
+- **Ctrl/Cmd + W**: Close window
+- **Ctrl/Cmd + Q**: Quit application
+
+### **Menu Options**
+- **File → Reset to Pink Noise**: Switch back to built-in pink noise
+- **View → Toggle Full Screen**: Enter/exit full screen mode
+- **View → Toggle Developer Tools**: Open/close developer console
+- **Window → Minimize/Close**: Window management
+
+### **Global Keyboard Detection**
+The app continues to respond to your typing even when:
+- Minimized to taskbar/dock
+- Hidden behind other windows
+- Running in background
+- Not the active application
+
+This ensures your meditative breathing experience continues uninterrupted while you work in other applications.
 
 ## Behavior Details
 
@@ -81,7 +124,7 @@ This provides dramatic control over the ambient lighting, allowing you to adjust
 
 ### Autoplay Policy
 
-The app attempts audio playback on load. If blocked by the browser, it starts automatically on your first natural interaction (keydown/pointer/touch). No buttons or icons are used.
+The desktop app starts audio playback immediately on launch. No user interaction required - the meditative experience begins as soon as you open the application.
 
 ### Safety
 
@@ -94,6 +137,36 @@ The app attempts audio playback on load. If blocked by the browser, it starts au
 
 Keystrokes are not stored or sent anywhere. Cadence metrics are computed in-memory and used only to modulate audio/visual parameters locally.
 
-## Deploy (Vercel/Netlify)
+## Platform Support
 
-Deploy the dist/ output. Framework preset: Vite. Single-page static hosting is sufficient.
+### **Desktop Applications**
+- **Windows**: NSIS installer (.exe)
+- **macOS**: DMG package (.dmg)
+- **Linux**: AppImage (.AppImage)
+
+### **Build Commands**
+```bash
+# Build for current platform
+npm run dist
+
+# Build for all platforms (requires platform-specific tools)
+npm run electron-build
+```
+
+### **Distribution**
+The built applications will be in the `dist-electron` folder and can be distributed as standalone desktop applications.
+
+## Development
+
+### **Prerequisites**
+- Node.js 18+
+- npm
+
+### **File Structure**
+```
+calm-flow/
+├── electron/           # Electron main process
+├── src/               # Application source code
+├── dist/              # Built web assets
+└── dist-electron/     # Built desktop applications
+```
