@@ -12,6 +12,11 @@ contextBridge.exposeInMainWorld('electronAPI', {
     ipcRenderer.on('reset-to-noise', callback)
   },
   
+  // Listen for global keystroke events from main process
+  onGlobalKeystroke: (callback) => {
+    ipcRenderer.on('global-keystroke', callback)
+  },
+  
   // Remove listeners
   removeAllListeners: (channel) => {
     ipcRenderer.removeAllListeners(channel)

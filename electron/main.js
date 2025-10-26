@@ -1,4 +1,4 @@
-const { app, BrowserWindow, Menu, shell } = require('electron')
+const { app, BrowserWindow, Menu, shell, globalShortcut } = require('electron')
 const path = require('path')
 const isDev = process.env.NODE_ENV === 'development'
 
@@ -73,6 +73,9 @@ app.whenReady().then(() => {
 
   // Set up application menu
   createMenu()
+  
+  // Set up global keyboard hooks for hidden app detection
+  setupGlobalKeyboardHooks()
 })
 
 // Quit when all windows are closed (except on macOS)
@@ -179,6 +182,41 @@ function createMenu() {
 
 // Handle app protocol for deep linking (optional)
 app.setAsDefaultProtocolClient('calm-flow')
+
+// Set up global keyboard hooks for hidden app detection
+function setupGlobalKeyboardHooks() {
+  // Register global shortcuts for common keys
+  const commonKeys = [
+    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
+    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
+    'space', 'enter', 'backspace', 'tab'
+  ]
+  
+  // Register each key as a global shortcut
+  commonKeys.forEach(key => {
+    try {
+      globalShortcut.register(key, () => {
+        // Send keystroke event to renderer process
+        if (mainWindow && mainWindow.webContents) {
+          mainWindow.webContents.send('global-keystroke', {
+            key: key,
+            timestamp: Date.now(),
+            appHidden: !mainWindow.isVisible() || mainWindow.isMinimized()
+          })
+        }
+      })
+    } catch (error) {
+      console.log(`Could not register global shortcut for key: ${key}`)
+    }
+  })
+  
+  console.log('Global keyboard hooks registered')
+}
+
+// Clean up global shortcuts on app quit
+app.on('will-quit', () => {
+  globalShortcut.unregisterAll()
+})
 
 // Export for potential use in renderer
 module.exports = { mainWindow }

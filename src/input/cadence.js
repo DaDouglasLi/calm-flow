@@ -69,7 +69,7 @@ function publishMetrics() {
   document.dispatchEvent(event)
 }
 
-// Handle keydown events
+// Handle keydown events (both local and global)
 function handleKeydown(event) {
   if (!isActive) return
   
@@ -82,20 +82,41 @@ function handleKeydown(event) {
     timestamp: now
   })
   
+  processKeystroke(now)
+}
+
+// Handle global keystrokes from Electron main process
+function handleGlobalKeystroke(event, data) {
+  if (!isActive) return
+  
+  const now = performance.now()
+  
+  // Debug: Log when global keystrokes are detected
+  console.log('Global keystroke detected:', {
+    key: data.key,
+    appHidden: data.appHidden,
+    timestamp: now
+  })
+  
+  processKeystroke(now)
+}
+
+// Process keystroke data (shared by both local and global handlers)
+function processKeystroke(timestamp) {
   // Add timestamp to ring buffer
-  timestampBuffer[bufferIndex] = now
+  timestampBuffer[bufferIndex] = timestamp
   bufferIndex = (bufferIndex + 1) % RING_BUFFER_SIZE
   bufferCount = Math.min(bufferCount + 1, RING_BUFFER_SIZE)
   
   // Calculate IKI if we have at least 2 keys
-  const ikiMs = calculateIKI(now)
+  const ikiMs = calculateIKI(timestamp)
   if (ikiMs !== null) {
     currentMetrics.lastIkiMs = ikiMs
     updateEMA(ikiMs)
     currentMetrics.emaIkiMs = emaIkiMs
   }
   
-  currentMetrics.lastKeyAt = now
+  currentMetrics.lastKeyAt = timestamp
   
   // Publish metrics (throttled) - works even when tab is hidden
   publishMetrics()
@@ -127,6 +148,12 @@ export function startCadence() {
   keydownListener = handleKeydown
   window.addEventListener('keydown', keydownListener, true)
   
+  // Set up global keystroke listener for Electron (works when app is hidden)
+  if (window.electronAPI && window.electronAPI.onGlobalKeystroke) {
+    window.electronAPI.onGlobalKeystroke(handleGlobalKeystroke)
+    console.log('Global keystroke listener registered')
+  }
+  
   console.log('Cadence analyzer started')
 }
 
@@ -143,6 +170,12 @@ export function stopCadence() {
   if (keydownListener) {
     window.removeEventListener('keydown', keydownListener, true)
     keydownListener = null
+  }
+  
+  // Remove global keystroke listener
+  if (window.electronAPI && window.electronAPI.removeAllListeners) {
+    window.electronAPI.removeAllListeners('global-keystroke')
+    console.log('Global keystroke listener removed')
   }
   
   // Reset state
