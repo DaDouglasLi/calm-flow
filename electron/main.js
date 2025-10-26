@@ -74,8 +74,8 @@ app.whenReady().then(() => {
   // Set up application menu
   createMenu()
   
-  // Set up global keyboard hooks for hidden app detection
-  setupGlobalKeyboardHooks()
+  // Global keyboard hooks disabled to avoid interfering with normal typing
+  // setupGlobalKeyboardHooks()
 })
 
 // Quit when all windows are closed (except on macOS)
@@ -185,15 +185,16 @@ app.setAsDefaultProtocolClient('calm-flow')
 
 // Set up global keyboard hooks for hidden app detection
 function setupGlobalKeyboardHooks() {
-  // Register global shortcuts for common keys
-  const commonKeys = [
-    'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm',
-    'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z',
-    'space', 'enter', 'backspace', 'tab'
+  // Only register a few specific keys to avoid interfering with normal typing
+  // Use modifier combinations that are less likely to conflict
+  const globalKeys = [
+    'CommandOrControl+Shift+Space',  // Unlikely to be used elsewhere
+    'CommandOrControl+Shift+Enter',  // Unlikely to be used elsewhere
+    'CommandOrControl+Shift+Tab'     // Unlikely to be used elsewhere
   ]
   
   // Register each key as a global shortcut
-  commonKeys.forEach(key => {
+  globalKeys.forEach(key => {
     try {
       globalShortcut.register(key, () => {
         // Send keystroke event to renderer process
@@ -210,7 +211,7 @@ function setupGlobalKeyboardHooks() {
     }
   })
   
-  console.log('Global keyboard hooks registered')
+  console.log('Global keyboard hooks registered (non-intrusive)')
 }
 
 // Clean up global shortcuts on app quit

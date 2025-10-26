@@ -148,11 +148,11 @@ export function startCadence() {
   keydownListener = handleKeydown
   window.addEventListener('keydown', keydownListener, true)
   
-  // Set up global keystroke listener for Electron (works when app is hidden)
-  if (window.electronAPI && window.electronAPI.onGlobalKeystroke) {
-    window.electronAPI.onGlobalKeystroke(handleGlobalKeystroke)
-    console.log('Global keystroke listener registered')
-  }
+  // Global keystroke detection disabled to avoid interfering with normal typing
+  // if (window.electronAPI && window.electronAPI.onGlobalKeystroke) {
+  //   window.electronAPI.onGlobalKeystroke(handleGlobalKeystroke)
+  //   console.log('Global keystroke listener registered')
+  // }
   
   console.log('Cadence analyzer started')
 }
@@ -172,11 +172,11 @@ export function stopCadence() {
     keydownListener = null
   }
   
-  // Remove global keystroke listener
-  if (window.electronAPI && window.electronAPI.removeAllListeners) {
-    window.electronAPI.removeAllListeners('global-keystroke')
-    console.log('Global keystroke listener removed')
-  }
+  // Global keystroke detection disabled
+  // if (window.electronAPI && window.electronAPI.removeAllListeners) {
+  //   window.electronAPI.removeAllListeners('global-keystroke')
+  //   console.log('Global keystroke listener removed')
+  // }
   
   // Reset state
   timestampBuffer.length = 0
