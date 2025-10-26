@@ -6,7 +6,7 @@ This is a project built for HackWashU 2025.
 
 ## Features
 - **Desktop Application** - Native Electron app with cross-platform support (Windows, macOS, Linux)
-- **Global Keyboard Detection** - Responds to typing even when the app is minimized or hidden behind other windows
+- **Desktop Keyboard Detection** - Responds to typing when the app is focused, without interfering with other applications
 - **Real-time typing cadence analysis** - Monitors keystroke timing and calculates smoothed inter-key intervals (IKI) to detect typing rhythm
 - **Audio-visual synchronization** - Synchronizes breathing frequencies between pink noise audio engine and visual breathing animation for unified meditative experience
 - **Dynamic parameter mapping** - Maps typing cadence to audio parameters (gain, cutoff, breath rate) and visual parameters (speed, detail, saturation) with smooth transitions
@@ -81,14 +81,14 @@ npm run dist
 - **View → Toggle Developer Tools**: Open/close developer console
 - **Window → Minimize/Close**: Window management
 
-### **Global Keyboard Detection**
-The app continues to respond to your typing even when:
-- Minimized to taskbar/dock
-- Hidden behind other windows
-- Running in background
-- Not the active application
+### **Desktop Keyboard Detection**
+The app responds to your typing when it's focused, providing:
+- **Focused Experience** - Breathing effects respond when you type in the app
+- **No Interference** - Doesn't interfere with typing in other applications
+- **Smooth Integration** - Works seamlessly with your desktop workflow
+- **Meditative Focus** - Encourages mindful interaction with the app
 
-This ensures your meditative breathing experience continues uninterrupted while you work in other applications.
+**Note:** The app responds to typing when it's the active/focused window. This ensures it doesn't interfere with your normal typing in other applications while still providing the meditative breathing experience when you're using it.
 
 ## Behavior Details
 
