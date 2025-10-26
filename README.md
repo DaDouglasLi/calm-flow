@@ -33,8 +33,8 @@ Auto visual background + pink-ish noise with breathing; both respond to typing c
 
 ```bash
 # Prereqs: Node.js 18+ and npm
-git clone <https://github.com/DaDouglasLi/calm-flow.git>.git
-cd <calm-flow>
+git clone https://github.com/DaDouglasLi/calm-flow.git
+cd calm-flow
 npm install
 npm run dev
 # open the shown local URL in your browser
@@ -65,7 +65,7 @@ White Noise Loop → Pink Tilt Filter → Lowpass Filter → Master Gain → Bre
 - **breathHz:** 0.07 (fast) ↔ 0.12 (slow)
 
 #### Visual:
-- **speed:** 0.07 (fast) ↔ 0.12 (slow)
+- **speed:** 0.14 (fast) ↔ 0.06 (slow) - *doubled sensitivity for more responsive animation*
 - **detail:** 0.6 (fast) ↔ 1.0 (slow)
 - **saturation:** 0.6 (fast) ↔ 0.8 (slow)
 
