@@ -1,19 +1,48 @@
 {
   "name": "calm-flow",
   "version": "1.0.0",
-  "description": "a repository for HackWashU 2025",
-  "main": "index.js",
+  "description": "A meditative web experience that combines background pink-ish noise with slow breathing and a generative abstract visual, both responding to typing cadence",
+  "main": "electron/main.js",
+  "homepage": "./",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
+    "electron": "electron .",
+    "electron-dev": "NODE_ENV=development electron .",
+    "electron-build": "npm run build && electron-builder",
+    "dist": "npm run build && electron-builder --publish=never",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
+  "keywords": ["meditation", "typing", "audio", "visual", "breathing", "calm"],
+  "author": "Da Li & Qiyuan Huang",
   "license": "ISC",
+  "build": {
+    "appId": "com.calmflow.app",
+    "productName": "Calm Flow",
+    "directories": {
+      "output": "dist-electron"
+    },
+    "files": [
+      "dist/**/*",
+      "electron/**/*",
+      "node_modules/**/*"
+    ],
+    "mac": {
+      "category": "public.app-category.utilities",
+      "target": "dmg"
+    },
+    "win": {
+      "target": "nsis"
+    },
+    "linux": {
+      "target": "AppImage"
+    }
+  },
   "devDependencies": {
     "@types/node": "^24.9.1",
+    "electron": "^38.4.0",
+    "electron-builder": "^26.0.12",
     "typescript": "^5.9.3",
     "vite": "^6.4.1"
   }

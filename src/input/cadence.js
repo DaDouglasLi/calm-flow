@@ -75,6 +75,13 @@ function handleKeydown(event) {
   
   const now = performance.now()
   
+  // Debug: Log when keystrokes are detected (including when tab is hidden)
+  console.log('Keystroke detected:', {
+    key: event.key,
+    tabHidden: document.hidden,
+    timestamp: now
+  })
+  
   // Add timestamp to ring buffer
   timestampBuffer[bufferIndex] = now
   bufferIndex = (bufferIndex + 1) % RING_BUFFER_SIZE

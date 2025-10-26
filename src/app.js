@@ -114,11 +114,13 @@ function setupEventListeners() {
 function handleCadenceUpdate(event) {
   const { lastIkiMs, emaIkiMs, lastKeyAt } = event.detail
   
-  // Log metrics to console
+  // Log metrics to console with visibility state
   console.log('Cadence Update:', {
     lastIkiMs: lastIkiMs !== null ? `${lastIkiMs.toFixed(1)}ms` : 'N/A',
     emaIkiMs: emaIkiMs !== null ? `${emaIkiMs.toFixed(1)}ms` : 'N/A',
-    lastKeyAt: lastKeyAt !== null ? new Date(lastKeyAt).toLocaleTimeString() : 'N/A'
+    lastKeyAt: lastKeyAt !== null ? new Date(lastKeyAt).toLocaleTimeString() : 'N/A',
+    tabHidden: document.hidden,
+    audioRunning: audioEngine ? audioEngine.isRunning() : false
   })
   
   // DEV: Mark cadence as received

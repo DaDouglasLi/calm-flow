@@ -313,6 +313,15 @@ export function createAudioEngine() {
         return
       }
       
+      // Resume audio context if suspended (common when tab is hidden)
+      if (audioContext.state === 'suspended') {
+        audioContext.resume().then(() => {
+          console.log('Audio context resumed from suspended state')
+        }).catch(error => {
+          console.error('Failed to resume audio context:', error)
+        })
+      }
+      
       const currentTime = audioContext.currentTime
       
       try {
